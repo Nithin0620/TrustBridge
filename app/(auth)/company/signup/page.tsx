@@ -1,3 +1,5 @@
+"use client"; // Add this to make the component interactive
+
 import { AuthForm } from "@/components/auth-form"
 
 export default function CompanySignupPage() {

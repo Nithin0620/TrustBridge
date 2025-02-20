@@ -8,8 +8,8 @@ export default function Header() {
         <Link href="/" className="text-2xl font-bold text-primary">
           TrustBridge
         </Link>
-        <nav className="hidden space-x-4 md:flex">
-          <Link href="/getting-started" className="text-muted-foreground hover:text-primary">
+        {/* <nav className="hidden space-x-4 md:flex"> */}
+          {/* <Link href="/getting-started" className="text-muted-foreground hover:text-primary">
             Getting Started
           </Link>
           <Link href="/learn-more" className="text-muted-foreground hover:text-primary">
@@ -20,8 +20,8 @@ export default function Header() {
           </Link>
           <Link href="#" className="text-muted-foreground hover:text-primary">
             For Companies
-          </Link>
-        </nav>
+          </Link> */}
+        {/* </nav> */}
         <div className="flex space-x-2">
           <div className="space-x-2">
             <Button variant="outline" asChild>

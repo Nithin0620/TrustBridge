@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -14,13 +15,18 @@ export default function Hero() {
           Secure, transparent, and fair collaboration platform for remote work
         </p>
         <div className="flex justify-center space-x-4">
-          <Button size="lg">
-            Get Started
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-          <Button size="lg" variant="outline">
-            Learn More
-          </Button>
+        <Button asChild size="lg">
+  <Link href="/getting-started">
+    Get Started
+    <ArrowRight className="ml-2 h-4 w-4" />
+  </Link>
+</Button>
+
+<Button asChild size="lg" variant="outline">
+  <Link href="/learn-more">
+    Learn More
+  </Link>
+</Button>
         </div>
       </div>
     </section>

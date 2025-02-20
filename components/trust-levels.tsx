@@ -1,5 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+"use client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const trustLevels = [
   {
@@ -7,10 +10,11 @@ const trustLevels = [
     features: [
       "Basic identity verification",
       "Projects under $500",
+      "Flexible milestones",
       "Full escrow protection",
       "Guided onboarding",
-      "Reduced fees for first project",
     ],
+    applyLink: "/apply?level=entry",
   },
   {
     level: "Established Trust",
@@ -19,7 +23,9 @@ const trustLevels = [
       "Projects up to $3,000",
       "Flexible milestones",
       "Basic work guarantee insurance",
+      "Reduced fees for first project",
     ],
+    applyLink: "/apply?level=established",
   },
   {
     level: "Premium Trust",
@@ -29,10 +35,13 @@ const trustLevels = [
       "Priority dispute resolution",
       "Comprehensive insurance",
     ],
+    applyLink: "/checkout?level=premium",
   },
-]
+];
 
 export default function TrustLevels() {
+  const router = useRouter();
+
   return (
     <section id="trust-levels" className="bg-muted py-20">
       <div className="container mx-auto px-4">
@@ -47,17 +56,23 @@ export default function TrustLevels() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-grow">
-                <ul className="list-inside list-disc space-y-2">
+                <ul className="list-inside list-disc space-y-2 mb-4">
                   {level.features.map((feature, featureIndex) => (
                     <li key={featureIndex}>{feature}</li>
                   ))}
                 </ul>
+                <Button 
+                  onClick={() => router.push(level.applyLink)} 
+                  className="w-full"
+                  variant={index === 2 ? "destructive" : "default"}
+                >
+                  {index === 2 ? "Upgrade & Pay" : "Apply Now"}
+                </Button>
               </CardContent>
             </Card>
           ))}
         </div>
       </div>
     </section>
-  )
+  );
 }
-

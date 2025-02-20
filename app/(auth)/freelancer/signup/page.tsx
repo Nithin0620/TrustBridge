@@ -1,11 +1,17 @@
-import { AuthForm } from "@/components/auth-form"
+"use client";
 
-export default function FreelancerSignupPage() {
-  const handleSubmit = (data: any) => {
-    // Handle freelancer signup logic here
-    console.log("Freelancer signup:", data)
-  }
+import { AuthForm } from "@/components/auth-form";
 
-  return <AuthForm type="signup" userType="freelancer" onSubmit={handleSubmit} />
+export default function Page() {
+  // Use the correct type for the function parameter
+  const handleSubmit = (data: { 
+    email: string; 
+    password: string; 
+    name?: string; 
+    confirmPassword?: string; 
+  }) => {
+    console.log("Form submitted:", data);
+  };
+
+  return <AuthForm type="signup" userType="freelancer" onSubmit={handleSubmit} />;
 }
-
