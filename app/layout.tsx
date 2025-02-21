@@ -1,36 +1,26 @@
-import type { Metadata } from 'next'
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton
-} from '@clerk/nextjs'
-import './globals.css'
+import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
+import Header from "@/components/header"; // Ensure single import
+import "./globals.css";
+
 export const metadata: Metadata = {
-  title: 'TrustBridge',
-  description: '',
-  generator: '',
-}
+  title: "TrustBridge",
+  description: "",
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <ClerkProvider>
       <html lang="en">
         <body>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+          {/* <Header /> Ensure this is the only place Header is included */}
           {children}
         </body>
       </html>
     </ClerkProvider>
-  )
+  );
 }
