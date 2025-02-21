@@ -1,8 +1,7 @@
-"use client";
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 
 const trustLevels = [
   {
@@ -14,6 +13,8 @@ const trustLevels = [
       "Full escrow protection",
       "Guided onboarding",
     ],
+    requiredProjects: 5,
+    upgradeRequirement: "Complete 5 verified projects to unlock Established Trust",
     applyLink: "/apply?level=entry",
   },
   {
@@ -25,6 +26,8 @@ const trustLevels = [
       "Basic work guarantee insurance",
       "Reduced fees for first project",
     ],
+    requiredProjects: 15,
+    upgradeRequirement: "Complete 15 verified projects to unlock Premium Trust",
     applyLink: "/apply?level=established",
   },
   {
@@ -35,12 +38,60 @@ const trustLevels = [
       "Priority dispute resolution",
       "Comprehensive insurance",
     ],
+    requiredProjects: null,
+    upgradeRequirement: "Highest level achieved",
     applyLink: "/checkout?level=premium",
   },
 ];
 
-export default function TrustLevels() {
-  const router = useRouter();
+const TrustLevels = () => {
+  // This would come from your backend/state management
+  const completedProjects = 7; // Example: user has completed 7 projects
+  const currentLevel = 0; // Example: user is at Entry Trust level (0-based index)
+  
+  const handleApply = (link) => {
+    console.log('Navigate to:', link);
+  };
+  
+  const renderButton = (level, index) => {
+    // If it's the current level or below, don't show upgrade button
+    if (index <= currentLevel) {
+      return (
+        <Button className="w-full" variant="outline" disabled>
+          Current Level
+        </Button>
+      );
+    }
+    
+    // If it's the next level up
+    if (index === currentLevel + 1) {
+      // If they've completed enough projects
+      if (completedProjects >= level.requiredProjects) {
+        return (
+          <Button
+            onClick={() => handleApply(level.applyLink)}
+            className="w-full"
+            variant="default"
+          >
+            Apply Now
+          </Button>
+        );
+      }
+      // If they haven't completed enough projects
+      return (
+        <Button className="w-full" variant="outline" disabled>
+          {completedProjects} / {level.requiredProjects} Projects Completed
+        </Button>
+      );
+    }
+    
+    // For levels more than one step up
+    return (
+      <Button className="w-full" variant="outline" disabled>
+        Complete Previous Level First
+      </Button>
+    );
+  };
 
   return (
     <section id="trust-levels" className="bg-muted py-20">
@@ -52,7 +103,9 @@ export default function TrustLevels() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   {level.level}
-                  <Badge variant={index === 2 ? "default" : "secondary"}>Level {index + 1}</Badge>
+                  <Badge variant={index === 2 ? "default" : "secondary"}>
+                    Level {index + 1}
+                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-grow">
@@ -61,13 +114,12 @@ export default function TrustLevels() {
                     <li key={featureIndex}>{feature}</li>
                   ))}
                 </ul>
-                <Button 
-                  onClick={() => router.push(level.applyLink)} 
-                  className="w-full"
-                  variant={index === 2 ? "destructive" : "default"}
-                >
-                  {index === 2 ? "Upgrade & Pay" : "Apply Now"}
-                </Button>
+                <div className="mt-4 pt-4 border-t border-muted-foreground/20">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {level.upgradeRequirement}
+                  </p>
+                  {renderButton(level, index)}
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -75,4 +127,6 @@ export default function TrustLevels() {
       </div>
     </section>
   );
-}
+};
+
+export default TrustLevels;

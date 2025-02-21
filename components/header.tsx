@@ -38,10 +38,12 @@ export default function Header() {
             <Button asChild>
               <Link href="/company/signup">Company Signup</Link>
             </Button>
+            <Button asChild>
+              <Link href="/">Company Signup</Link>
+            </Button>
           </div>
         </div>
       </div>
     </header>
   )
 }
-
