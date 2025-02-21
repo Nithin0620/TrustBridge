@@ -14,6 +14,7 @@ export default function ApplyPage() {
   
   const trustLevelParam = searchParams.get("level") || "Entry Trust";
 
+  // Normalize trust level to match object keys
   const trustLevels = {
     entry: "Entry Trust",
     established: "Established Trust",
@@ -22,6 +23,7 @@ export default function ApplyPage() {
   
   const trustLevel = trustLevels[trustLevelParam.toLowerCase()] || "Entry Trust";
 
+  // Define required documents based on trust level
   const trustDocuments: { [key: string]: string[] } = {
     "Entry Trust": ["Aadhaar Card", "PAN Card"],
     "Established Trust": ["Aadhaar Card", "PAN Card", "Your Address", "Neighbor’s Address"],
@@ -30,23 +32,52 @@ export default function ApplyPage() {
 
   const documents = trustDocuments[trustLevel] || [];
 
-  // Step Control for Premium Trust Only
-  const [step, setStep] = useState(1);
+  // Debugging logs
+  console.log("URL Trust Level:", trustLevelParam);
+  console.log("Mapped Trust Level:", trustLevel);
+  console.log("Required Documents:", documents);
 
   // Form state
-  const [formData, setFormData] = useState({ name: "", email: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", address: "", neighborAddress: "", incomeProof: "", bankStatement: "" });
+  const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: File | null }>({});
+  const [uploadPreview, setUploadPreview] = useState<{ [key: string]: string }>({}); // Store preview URLs
 
   // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission for Premium Trust
+  // Handle file upload
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, docType: string) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      setUploadedFiles((prev) => ({
+        ...prev,
+        [docType]: file,
+      }));
+
+      // Generate preview URL for images (only if it's an image)
+      if (file && file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          if (event.target?.result) {
+            setUploadPreview((prev) => ({
+              ...prev,
+              [docType]: event.target.result as string,
+            }));
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
+  // Handle form submission (Redirect for Premium Trust)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (trustLevel === "Premium Trust") {
-      setStep(2); // Only move to payment for Premium Trust
+      router.push("/checkout"); // Redirect to payment page
     } else {
       alert(`Application submitted for ${trustLevel}!`);
     }
@@ -58,50 +89,83 @@ export default function ApplyPage() {
         <CardHeader>
           <CardTitle className="text-xl font-bold">Apply for {trustLevel}</CardTitle>
         </CardHeader>
-
         <CardContent>
-          {/* Step 1: Show Form */}
-          {step === 1 && (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label className="text-sm font-semibold">Name</Label>
-                <Input name="name" value={formData.name} onChange={handleInputChange} required />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
 
-              <div>
-                <Label className="text-sm font-semibold">Email</Label>
-                <Input type="email" name="email" value={formData.email} onChange={handleInputChange} required />
-              </div>
 
-              {/* Document Upload Section */}
-              {documents.length > 0 && (
+            {/* Name Field */}
+            <div>
+              <Label className="text-sm font-semibold">Name</Label>
+              <Input name="name" value={formData.name} onChange={handleInputChange} required />
+            </div>
+
+            {/* Email Field */}
+            <div>
+              <Label className="text-sm font-semibold">Email</Label>
+              <Input type="email" name="email" value={formData.email} onChange={handleInputChange} required />
+            </div>
+
+            {/* Address Fields for "Established Trust" and "Premium Trust" */}
+            {(trustLevel === "Established Trust" || trustLevel === "Premium Trust") && (
+              <>
                 <div>
-                  <Label className="font-semibold">Upload Verification Documents</Label>
-                  {documents.map((doc, index) => (
-                    <div key={index} className="mt-2">
-                      <Label className="text-sm font-medium">{doc}</Label>
-                      <Input type="file" accept="image/*,application/pdf" required />
-                    </div>
-                  ))}
+                  <Label className="text-sm font-semibold">Your Address</Label>
+                  <Input name="address" value={formData.address} onChange={handleInputChange} required />
                 </div>
-              )}
+                <div>
+                  <Label className="text-sm font-semibold">Neighbor’s Address</Label>
+                  <Input name="neighborAddress" value={formData.neighborAddress} onChange={handleInputChange} required />
+                </div>
+              </>
+            )}
 
-              {/* Submit Button (Changes for Premium Trust) */}
-              <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">
-                {trustLevel === "Premium Trust" ? "Proceed to Payment" : "Submit Application"}
-              </Button>
-            </form>
-          )}
+            {/* Additional Fields for Premium Trust */}
+            {trustLevel === "Premium Trust" && (
+              <>
+                <div>
+                  <Label className="text-sm font-semibold">Income Proof</Label>
+                  <Input name="incomeProof" value={formData.incomeProof} onChange={handleInputChange} required />
+                </div>
+                <div>
+                  <Label className="text-sm font-semibold">Bank Statement</Label>
+                  <Input name="bankStatement" value={formData.bankStatement} onChange={handleInputChange} required />
+                </div>
+              </>
+            )}
 
-          {/* Step 2: Payment Page for Premium Trust */}
-          {step === 2 && trustLevel === "Premium Trust" && (
-            <div className="text-center">
-              <p className="text-lg font-semibold mb-4">Complete your payment to finalize the application</p>
-              <Button onClick={() => router.push("/checkout")} className="w-full bg-red-600 text-white hover:bg-red-700">
+            {/* Dynamic Document Upload Fields */}
+            {documents.length > 0 ? (
+              <div className="space-y-3">
+                <Label className="font-semibold">Upload Verification Documents</Label>
+                {documents.map((doc, index) => (
+                  <div key={index}>
+                    <Label htmlFor={`file-${doc}`} className="block text-sm font-medium text-gray-700">
+                      {doc}
+                    </Label>
+                    <Input id={`file-${doc}`} type="file" accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, doc)} required />
+                    {/* Preview uploaded images */}
+                    {uploadPreview[doc] && (
+                      <img src={uploadPreview[doc]} alt={`${doc} preview`} className="mt-2 w-24 h-24 object-cover border rounded" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-red-500">Error: Trust Level documents not found.</p>
+            )}
+
+            {/* Show payment button only for Premium Trust */}
+            {trustLevel === "Premium Trust" ? (
+                
+              <Button type="submit" className="w-full bg-red-600 text-white hover:bg-red-700">
                 Make Payment
               </Button>
-            </div>
-          )}
+            ) : (
+              <Button type="submit" className="w-full bg-black text-white hover:bg-gray-800">
+                Submit Application
+              </Button>
+            )}
+          </form>
         </CardContent>
 
         <CardFooter className="text-center">
