@@ -1,12 +1,15 @@
 "use client";
+
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { SignedIn, SignedOut, UserButton, useClerk } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, useClerk, SignInButton } from "@clerk/nextjs";
 import { useState } from "react";
 
 export default function Header() {
   const [showEscrowForm, setShowEscrowForm] = useState(false);
   const { openSignIn } = useClerk(); // Use useClerk for programmatic sign-in
+  const router = useRouter();
 
   return (
     <header className="border-b bg-white shadow-sm">
@@ -16,37 +19,39 @@ export default function Header() {
         </Link>
 
         <div className="flex space-x-4">
-          <SignedOut>
-            {/* Custom button for signing in as a freelancer */}
-            <Button onClick={() => openSignIn({})}>
-              Sign in as Freelancer
-            </Button>
-          </SignedOut>
+          {/* Projects button - Always visible */}
+          <Button onClick={() => router.push("/projects")}>
+        Projects
+      </Button>
+  <SignedOut>
+    {/* Custom button for signing in as a freelancer */}
+    <Button onClick={() => openSignIn({})}>
+      Sign in as Freelancer
+    </Button>
+  </SignedOut>
 
-          <SignedOut>
-            {/* Custom button for signing in as a freelancer */}
-            <Button onClick={() => openSignIn({})}>
-              Sign in as Company
-            </Button>
-          </SignedOut>
+  <SignedOut>
+    {/* Custom button for signing in as a company */}
+    <Button onClick={() => openSignIn({})}>
+      Sign in as Company
+    </Button>
+  </SignedOut>
 
-          <SignedOut>
-            {/* No <Button> wrapping SignInButton to prevent hydration error */}
-            <SignInButton mode="modal" />
-          </SignedOut>
+  <SignedOut>
+    {/* SignInButton without hydration error */}
+    <SignInButton mode="modal" />
+  </SignedOut>
 
-          <SignedIn>
-            <Button onClick={() => setShowEscrowForm(!showEscrowForm)}>
-              Escrow
-            </Button>
-            <UserButton />
-          </SignedIn>
+  <SignedIn>
+    {/* Escrow button */}
+    <Button onClick={() => setShowEscrowForm(!showEscrowForm)}>
+      Escrow
+    </Button>
+    <UserButton />
+  </SignedIn>
 
-
-          <SignedIn>
-
-          </SignedIn>
-        </div>
+  
+</div>
 
         {showEscrowForm && (
           <div className="absolute right-4 top-16 mt-2 w-64 rounded-md bg-white shadow-lg">
