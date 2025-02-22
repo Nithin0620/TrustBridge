@@ -3,7 +3,7 @@ import React from 'react';
 
 const StickyButton: React.FC = () => {
     const handleClick = () => {
-        window.location.href = 'https://6100-38-188-110-250.ngrok-free.app/';
+        window.location.href = 'https://43eb-38-188-110-250.ngrok-free.app/';
     };
     return (
         <button 
@@ -21,7 +21,7 @@ const StickyButton: React.FC = () => {
                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
             }}
         >
-            Chat Boat
+            Chat Bot
         </button>
     );
 };
