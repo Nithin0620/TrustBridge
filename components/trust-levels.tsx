@@ -3,6 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+import { useRouter } from "next/navigation";
+import { SignedIn, SignedOut } from "@clerk/nextjs"; // Import Clerk components
+
+
 const trustLevels = [
   {
     level: "Entry Trust",
@@ -114,12 +118,33 @@ const TrustLevels = () => {
                     <li key={featureIndex}>{feature}</li>
                   ))}
                 </ul>
+
                 <div className="mt-4 pt-4 border-t border-muted-foreground/20">
                   <p className="text-sm text-muted-foreground mb-4">
                     {level.upgradeRequirement}
                   </p>
                   {renderButton(level, index)}
                 </div>
+
+
+                {/* Show buttons only if user is signed in */}
+                <SignedIn>
+                  <Button
+                    onClick={() => router.push(level.applyLink)}
+                    className="w-full"
+                    variant={index === 2 ? "destructive" : "default"}
+                  >
+                    {index === 2 ? "Upgrade & Pay" : "Apply Now"}
+                  </Button>
+                </SignedIn>
+
+                {/* Show message if user is signed out */}
+                <SignedOut>
+                  <div className="text-center text-sm text-muted-foreground">
+                    Please sign in to apply.
+                  </div>
+                </SignedOut>
+
               </CardContent>
             </Card>
           ))}
@@ -127,6 +152,10 @@ const TrustLevels = () => {
       </div>
     </section>
   );
+
 };
 
 export default TrustLevels;
+
+}
+
