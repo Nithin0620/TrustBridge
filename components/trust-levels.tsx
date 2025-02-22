@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { SignedIn, SignedOut } from "@clerk/nextjs"; // Import Clerk components
 
 const trustLevels = [
   {
@@ -52,7 +53,9 @@ export default function TrustLevels() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   {level.level}
-                  <Badge variant={index === 2 ? "default" : "secondary"}>Level {index + 1}</Badge>
+                  <Badge variant={index === 2 ? "default" : "secondary"}>
+                    Level {index + 1}
+                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-grow">
@@ -61,13 +64,24 @@ export default function TrustLevels() {
                     <li key={featureIndex}>{feature}</li>
                   ))}
                 </ul>
-                <Button 
-                  onClick={() => router.push(level.applyLink)} 
-                  className="w-full"
-                  variant={index === 2 ? "destructive" : "default"}
-                >
-                  {index === 2 ? "Upgrade & Pay" : "Apply Now"}
-                </Button>
+
+                {/* Show buttons only if user is signed in */}
+                <SignedIn>
+                  <Button
+                    onClick={() => router.push(level.applyLink)}
+                    className="w-full"
+                    variant={index === 2 ? "destructive" : "default"}
+                  >
+                    {index === 2 ? "Upgrade & Pay" : "Apply Now"}
+                  </Button>
+                </SignedIn>
+
+                {/* Show message if user is signed out */}
+                <SignedOut>
+                  <div className="text-center text-sm text-muted-foreground">
+                    Please sign in to apply.
+                  </div>
+                </SignedOut>
               </CardContent>
             </Card>
           ))}
