@@ -29,6 +29,10 @@ const loginSchema = z.object(commonSchema);
 const signupSchema = z
   .object({
     ...commonSchema,
+
+
+
+    
     name: z.string().min(2, { message: "Name must be at least 2 characters long" }),
     confirmPassword: z.string(),
   })
